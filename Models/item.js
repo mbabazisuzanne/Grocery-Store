@@ -7,7 +7,9 @@ const itemSchema = new Schema(
     
         stock: { type: Number, default: 1 },
     
-        price: { type: Number, default: 0 }
+        price: { type: Number, default: 0, required:true },
+
+        category: {type: String, required:true}
     },
     { timestamps: true}//adds createdAt and UpdatedAt fields to the Schema
 );

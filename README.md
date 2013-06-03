@@ -18,7 +18,8 @@
 ### Item Schema
 title:{type:text},
 stock:{type:number},
-price:{type:number}
+price:{type:number},
+category:{type:number}
 
 ### User Schema
 username: {type:text},

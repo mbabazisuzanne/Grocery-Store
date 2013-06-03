@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const itemCategorySchema = new Schema(
     {
         title: { type: String, required: true, text: true },
-        products: [{ type: Schema.Types.ObjectId, ref: "Item" }]
+        products: {type:Array, 'default':[]}
     },
     { timestamps: true}
 );
