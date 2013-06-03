@@ -6,13 +6,15 @@ require('./config/databaseConfig');
 const itemRouter = require('./Routes/itemRoute');
 const categoryRouter = require('./Routes/categoryRoute');
 const usersRouter = require('./Routes/usersRoute');
+const userRoutes = require('./Routes/users')
 
 
 //Initializing Express app
 const app = express();
 
 app.use(express.json());
-app.use("/auth", usersRouter);
+//app.use("/auth", usersRouter);
+app.use('/auth', userRoutes);
 app.use("/inventory", categoryRouter);
 app.use("/inventory", itemRouter);
 
