@@ -1,6 +1,6 @@
 # CORE-Project-One
 
-###Grocery-Store
+### Grocery-Store
 
 ### Collaborators
 - Mbabazi Suzan
