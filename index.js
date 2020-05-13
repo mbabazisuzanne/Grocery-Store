@@ -1,0 +1,27 @@
+const express = require('express');
+//import Environment Variables
+require('dotenv').config();
+//Configuring the Database
+require('./config/databaseConfig');
+const itemRouter = require('./Routes/itemRoute');
+const categoryRouter = require('./Routes/categoryRoute');
+const usersRouter = require('./Routes/usersRoute');
+
+
+//Initializing Express app
+const app = express();
+
+app.use(express.json());
+app.use("/auth", usersRouter);
+app.use("/inventory", categoryRouter);
+app.use("/inventory", itemRouter);
+
+app.get('/inventory',(req,res)=>{
+    res.json({"Message":"Welcome to the Grocery inventory Management Application"});
+})
+
+//Listening on port
+const port = process.env.PORT || 3000;
+app.listen(port,()=>{
+    console.log(`Listening on Port ${port}`);
+})
