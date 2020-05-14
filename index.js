@@ -17,7 +17,7 @@ app.use("/inventory", categoryRouter);
 app.use("/inventory", itemRouter);
 
 app.get('/inventory',(req,res)=>{
-    res.json({"Message":"Welcome to the Grocery inventory Management Application"});
+    res.json({"Message":"Welcome to the Grocery inventory Management Application use /inventory/item to add items  and use /iventory/category to add a category"});
 })
 
 //Listening on port
