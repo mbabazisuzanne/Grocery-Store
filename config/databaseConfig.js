@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 
 //Connecting to MongoDB database
-mongoose.connect(process.env.DB_URL,{ useNewUrlParser:true, useUnifiedTopology:true, useFindAndModify:false})
+mongoose.connect(process.env.DB_URL_Atlas,{ useNewUrlParser:true, useUnifiedTopology:true, useFindAndModify:false})
 .then(()=>{
     console.log('SUCCESSFULL CONNECTION')
 })
