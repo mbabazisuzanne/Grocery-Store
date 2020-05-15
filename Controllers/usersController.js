@@ -1,4 +1,6 @@
 const User = require("../Models/userModel");
+const { signToken } = require("../helpers/auth");
+const bcrypt = require('bcrypt')
 require("dotenv").config();
 
 
@@ -6,8 +8,8 @@ module.exports = {
   SignUp: (req, res) => {
     const req_username = req.body.username;
     const req_password = req.body.password;
-    const req_firstName = req.body.firstName;
-    const req_lastName = req.body.lastName;
+    const req_email = req.body.email;
+    const req_contact = req.body.contact;
 
     //Check whether that user already exists before creating a new document entry in our users collection.
     User.findOne({ username: req_username }).then(user => {
@@ -19,18 +21,19 @@ module.exports = {
         const NewUser = new User({
           username: req_username,
           password: req_password,
-          firstName: req_firstName,
-          lastName: req_lastName
+          email: req_email,
+          contact: req_contact
         });
         NewUser.save()
           .then(saved => {
             console.log("NEW USER SAVED: ", saved);
-            return res.json({ message: "Sign Up Successfull!"});
+            const token = signToken(saved);
+            return res.status(200).json({ message: "Sign Up Successfull!"});
           })
           .catch(error => {
             //Show error on console
             console.log("ERROR OCCURED: ", error);
-            return res.json({ message: "Sing Up Failed!" });
+            return res.status(400).json({ message: "Sing Up Failed!" });
           });
       }
     });
@@ -39,12 +42,28 @@ module.exports = {
     const login_username = req.body.username;
     const login_password = req.body.password;
 
-    User.findOne({ username: login_username, password: login_password })
+    User.findOne({ username: login_username })
       .then(user => {
         if (user) {
-          return res
-            .status(200)
-            .json({ message: "You've successfully Loged in!"});
+          bcrypt.compare(req.body.password, user.password, (err, result) => {
+            if (err) {
+              return res.status(404).json({
+                error: "Unknown occured while loging you in, please retry!"
+              });
+            } else {
+              if (result === true) {
+                const token = signToken(user);
+                res.status(200).json({
+                  message: "You've successfully Loged in!",
+                  token: token
+                });
+              } else {
+                return res
+                  .status(404)
+                  .json({ error: "Invalid Password!" });
+              }
+            }
+          });
         } else {
           return res.status(500).json({ error: "No such user exists!" });
         }

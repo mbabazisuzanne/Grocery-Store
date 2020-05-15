@@ -15,7 +15,8 @@ const signup = (req, res) => {
       _id: new mongoose.Types.ObjectId(),
       userName: req.body.username,
       email: req.body.email,
-      password: hash
+      password: hash,
+      contact:req.body.contact
     });
 
     user
