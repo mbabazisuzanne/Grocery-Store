@@ -9,11 +9,20 @@
 - Jane Aguti
 
 ### Endpoints
+
 - /auth/signup `for adding a user`
 - /auth/view `to View users`
-- /inventory `to view entire stock`
+- /auth/login `to Login`
+
 - /inventory/item `to add item to inventory`
 - /inventory/items `to view all the items `
+
+- /inventory/category `to perform CRUD ops on Category `
+- /inventory/categories `to view all the categories `
+
+- /inventory/:categoryID `to view category by ID`
+- /inventory/:categoryID/items `to view category Items by categoryID`
+- /inventory/categoryID/items/:ItemID `to view category item by ID`
 
 ### Item Schema
 title:{type:text},
@@ -22,7 +31,7 @@ price:{type:number},
 category:{type:number}
 
 ### User Schema
-username: {type:text},
-password: {type:number},
-firstName:{type:text},
-lastName: {type:text}
+username: {type:String},
+password: {type:String},
+email: {type:String},
+contact: {type:Number}

@@ -12,5 +12,5 @@ mongoose.connect(process.env.DB_URL_Atlas,{ useNewUrlParser:true, useUnifiedTopo
 })
 
 const db = mongoose.connection
-module.exports = db
+module.exports = db;
 

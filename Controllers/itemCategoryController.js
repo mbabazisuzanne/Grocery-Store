@@ -3,127 +3,99 @@ const Item = require('../Models/item')
 
 
 module.exports = {
-    createCategory:(req,res)=>{
-        ItemCategory.findOne({title:req.body.title}).then(category=>{
+    createCategory: async(req,res)=>{
+        try{
+            //Check if item already Exists
+            const category = await ItemCategory.findOne({title:req.body.title});
             if(category){
-                return res.json({message:"Category Already Exits"})
+                //category already exists
+                return res.status(400).json({Message:"Category Already Exits"});
             }else{
+                //add category
                 const NewItemCategory = new ItemCategory({
                     title:req.body.title
                 });
-                NewItemCategory.save()
-                .then(saved=>{
-                    console.log("NEW category SAVED:", saved);
-                    return res.json({'message':'Successfully added category'})
-                })
-                .catch(error=>{
-                    console.log("ERROR OCCURED:", error);
-                    return res.json({'message':'Error Unable to add category'})
-                })
+                NewItemCategory.url = '/inventory/categories/'+ NewItemCategory._id
+                //save  new category
+                const savedCategory = await NewItemCategory.save()
+                console.log("NEW category SAVED:", savedCategory);
+                return res.json({Message:`Successfully added >> ${req.body.title} << category`})
+
             }
-        }) 
-        .catch(error=>{
-            console.log("ERROR OCCURED:", error);
-        })
+
+        }catch{
+            //return Error
+            return res.json({Message:'Error!!! >> Unable to add this Category'})
+        } 
+    },
+    categories: async(req,res)=>{
+        try{
+            //check for categories then Display them
+            const categories = await ItemCategory.find({});
+            res.status(200).json({Catogries:categories});
+
+        }catch{
+            //return an error 
+            return res.status(404).json({Message:"No Categories Found"});
+        }
+    },
+    updateCategory: async(req,res)=>{
+        try{
+            //check for category
+            const category = await ItemCategory.findOne({_id:req.params.CategoryId});
+            category.title = req.body.title
+            category.save()
+            return res.status(200).json({message:`>> ${category.title} << category has been updated`});
+        }catch{
+            //category not found
+            return res.status(404).json({Message:`Category of given ID >> "${req.params.CategoryId}" << not found`});
+
+        }
+    
+    },
+    deleteCategory: async (req,res)=>{
+        try{
+            //check DataBase for category
+            const result = await ItemCategory.findOneAndDelete({_id:req.params.CategoryId})
+            return res.status(200).json({message:`${result.title } category Deleted`})
+        }catch{ 
+            //category found error
+            return res.status(404).json({Message:`Category of given ID >> "${req.params.CategoryId}" << not found`});
+        }
         
     },
-    categories:(req,res)=>{
-        ItemCategory.find({})
-          .then(categories => {
-            if (categories) {
-              return res.json({ categories: categories });
-            } else {
-              return res
-                .json({ message: "No categories found!" });
-            }
-          })
-          .catch(err => {
-            return res
-              .json({ error: "Error occured while retrieving items list!" });
-          });
+    populateCategoryItems: async(req,res)=>{
+        try{
+            const result = await ItemCategory.findOne({_id:req.params.CategoryId});
+            const idCategory = result.title;
+            const result2  = await Item.find({category:idCategory},'stock price title category')
+            const itemsPop = result2
+            result.products.push(...itemsPop)
+            res.json({CategoryItems:result.products})
+        }catch(err){
+            res.status(404).json({message:"Category of given ID is NOT FOUND"})
+        }
     },
-    updateCategory:(req,res)=>{
-        ItemCategory.findOne({_id:req.params.CategoryId}).then(category=>{
-            if(category){
-                category.title = req.body.title
-                category.save()
-                return res.json({message:'category updated'})
-            }else{
-                return res.json('category not found')
-            }
-        })
-        .catch(err => {
-            return res
-              .json({ error: "Error occured while retrieving items list!" });
-          });
-    
+    getCategoryById: async (req,res)=>{
+        try{
+            const result = await ItemCategory.findOne({_id:req.params.CategoryId});
+            const idCategory = result.title;
+            const result2  = await Item.find({category:idCategory},'stock price title category')
+            const itemsPop = result2
+            result.products.push(...itemsPop)
+            res.json({Category:result})
+        }catch(err){
+            res.status(404).json({message:"Category of given ID is NOT FOUND"})
+        }
+        
     },
-    deleteCategory:(req,res)=>{
-        ItemCategory.findOneAndDelete({_id:req.params.CategoryId}).then(category=>{
-            if(category){
-                category.save()
-                return res.status(200).json({message:`${category.title } category Deleted`})
-            }else{
-                return res.status(404).json('category not found')
-            }
-        })
-        .catch(err => {
-            return res
-              .json({ error: "Error occured while retrieving category!" });
-          });
-    
-    },
-    populateCategoryItems:(req,res)=>{
-        ItemCategory.findOne({_id:req.params.CategoryId},(err,result)=>{
-            if(err){return res.status(404).json({message:"Category ID given is NOT FOUND"})}
-            else{
-            const idCategory = result.title; 
-            Item.find({category:idCategory},'stock price title category',(err,result)=>{
-                if(err){return err}
-                else{
-                    const itemsPop = result
-                    ItemCategory.findOne({_id:req.params.CategoryId}, 'products',(err,result)=>{
-                        if(err){return err}
-                        else{
-                            result.products.push(...itemsPop)
-                            //result.save()
-                            res.json({CategoryItems:result})
-                        }
-                    }) 
-                }
-            })
-            }
-        })
-    },
-    getCategoryById:(req,res)=>{
-        ItemCategory.findOne({_id:req.params.CategoryId},(err,result)=>{
-            if(err){return res.status(404).json({message:"Category of given ID is NOT FOUND"})}
-            else{
-            const idCategory = result.title; 
-            Item.find({category:idCategory},'stock price title category',(err,result)=>{
-                if(err){return err}
-                else{
-                    const itemsPop = result
-                    ItemCategory.findOne({_id:req.params.CategoryId},(err,result)=>{
-                        if(err){return err}
-                        else{
-                            result.products.push(...itemsPop)
-                            //result.save()
-                            res.json({Category:result})
-                        }
-                    }) 
-                }
-            })
-            }
-        })
-    },
-    getCategoryItemById:(req,res)=>{
-        Item.findOne({_id:req.params.ItemId},(err,result)=>{
-            if(err){return res.status(404).json({message:"Item of given Id is Not Available"})}
-            else{
-                res.json({item:result})
-            }
-        })
+    getCategoryItemById: async (req,res)=>{
+        try{
+         const result = await Item.findOne({_id:req.params.ItemId});
+         res.json({item:result})
+        }catch(err){
+            res.status(404).json({message:"Item of given ID is Not Available"})
+        }
     }
 
 }

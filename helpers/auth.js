@@ -1,4 +1,5 @@
-//const JWT = require("jsonwebtoken");
+const JWT = require("jsonwebtoken");
+require('dotenv').config();
 
 
 module.exports = {
@@ -13,20 +14,21 @@ module.exports = {
 
     if (header.startsWith("Bearer ")) {
       const token = header.split(" ")[1];
-      JWT.verify(token, process.env.SECRET, (err, decoded) => {
+      JWT.verify(token, process.env.SECRET, (err, authData) => {
         if (err) {
           return res
-            .status(StatusCodes.FORBIDDEN)
-            .json({ error: "Invalid Token!" });
+            .status(403)
+            .json({ Error: "Invalid Token >> Please Enter Valid Token!" });
         } else {
-          req.id = decoded.id;
+          //req.id = authData.id;
+          //res.status(200).json(authData)
           next();
         }
       });
     } else {
-      return res.status(StatusCodes.BAD_REQUEST).json({
+      return res.status(400).json({
         error:
-          "Malformed auhthorization. Auth header was in bad format, JWT token missing!"
+          "Auth header was in bad format, JWT token missing!"
       });
     }
   },
@@ -40,7 +42,7 @@ module.exports = {
       },
       process.env.SECRET,
       {
-        expiresIn: "30m"
+        expiresIn: "15m"
       }
     );
     return token;
