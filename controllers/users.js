@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
-const User = require("../models/user");
+const User = require("../Models/user");
 
 const signup = (req, res) => {
   bcrypt.hash(req.body.password, 10, (err, hash) => {
@@ -16,6 +16,7 @@ const signup = (req, res) => {
       userName: req.body.username,
       email: req.body.email,
       password: hash,
+      contact:req.body.contact
     });
 
     user
