@@ -9,11 +9,5 @@ const itemCategorySchema = new Schema(
     },
     { timestamps: true}
 );
-//Virtual for category URL
-// itemCategorySchema
-// .virtual('url')
-// .get(()=>{
-//   return '/inventory/categories/'+ this._id;
-// })
 
 module.exports = mongoose.model("ItemCategory", itemCategorySchema);

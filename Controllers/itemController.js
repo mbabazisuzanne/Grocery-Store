@@ -14,7 +14,7 @@ module.exports = {
           title:req.body.title,
           stock:req.body.stock,
           price:req.body.price,
-          category:req.body.category
+          category:(req.body.category).toUpperCase()
         });
         const newItemSaved = await NewItem.save()
         console.log("NEW ITEM SAVED:", newItemSaved);

@@ -13,7 +13,7 @@ module.exports = {
             }else{
                 //add category
                 const NewItemCategory = new ItemCategory({
-                    title:req.body.title
+                    title:(req.body.title).toUpperCase()
                 });
                 NewItemCategory.url = '/inventory/categories/'+ NewItemCategory._id
                 //save  new category
