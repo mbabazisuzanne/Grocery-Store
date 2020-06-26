@@ -43,6 +43,10 @@ app.use((error, req, res, next) => {
   next();
 });
 
-app.get(() => {});
+app.get('',(req,res) => {
+  res.status(200).json({
+    message:'welocme to my site'
+  })
+});
 
 module.exports = app;
