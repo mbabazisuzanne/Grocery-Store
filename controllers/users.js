@@ -1,6 +1,19 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const joi = require("@hapi/joi");
 const User = require("../models/user");
+
+const schema = joi.object({
+  userName:joi.string().alphanum().min(2).max(20).required(),
+  password:joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
+
+})
+  .with("userName","password")
+
+const {error,value}=schema.validate({})
+console.log("err",error)
+console.log("Apology accepted!",value)
 
 const signup = (req, res) => {
   bcrypt.hash(req.body.password, 10, (err, hash) => {
@@ -43,9 +56,18 @@ const login = (req, res) => {
     .exec()
     .then((Me) => {
       bcrypt.compare(password, Me.password, (err, result) => {
+        const token = jwt.sign(
+          {
+            userId: Me._Id,
+          },
+          process.env.SECRET,
+          { expiresIn: "1d" }
+        );
         if (result) {
+          console.log("");
           res.status(200).json({
             message: "Logged in successfully",
+            token,
           });
         } else {
           res.status(401).json({

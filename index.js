@@ -2,11 +2,15 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const app = express();
-const dotenv =  require('dotenv');
-const userRoutes = require('./routes/users')
+const dotenv = require("dotenv");
+const userRoutes = require("./routes/users");
+const itemRoutes = require("./routes/items");
+const categoryRoutes = require("./routes/categories");
 
-dotenv.config()
+dotenv.config();
 
+const cors = require('cors')
+app.use(cors())
 app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
@@ -23,7 +27,9 @@ mongoose
     console.log("Ooopss!", err);
   });
 
-app.use('/auth', userRoutes);
+app.use("/auth", userRoutes);
+app.use("/items", itemRoutes);
+app.use("/categories", categoryRoutes);
 
 app.use((req, res, next) => {
   const error = new Error("Not found");
@@ -36,5 +42,7 @@ app.use((error, req, res, next) => {
   res.json({ error: { message: error.message } });
   next();
 });
+
+app.get(() => {});
 
 module.exports = app;
